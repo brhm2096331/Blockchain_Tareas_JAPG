@@ -1,0 +1,22 @@
+;; pruebas del contrato hello-pact
+
+;; datos del keyset y llave "firmante"
+(env-data {"admin-keyset": ["admin-key"]})
+(env-keys ["admin-key"])
+
+;; cargamos el contrato
+(begin-tx)
+(load "hello.pact")
+(commit-tx)
+
+;; con la llave correcta si deja guardar
+(begin-tx)
+(hello-pact.guardar-nombre "Abraham")
+(expect "saluda al nombre guardado" "Hola, Abraham!" (hello-pact.saludar))
+(commit-tx)
+
+;; sin la llave no deja guardar
+(env-keys [])
+(begin-tx)
+(expect-failure "sin llave no deja guardar" (hello-pact.guardar-nombre "Pedro"))
+(commit-tx)
